@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Arena da Rivalidade</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="eyebrow">PAINEL RESTRITO</span><h1>⚙️ Administração</h1></div>
+    <a class="admin-link" href="index.html">Placar</a>
+  </header>
+
+  <main class="container admin-container">
+    <section id="loginPanel" class="admin-panel">
+      <span class="eyebrow">ACESSO</span>
+      <h2>Entrar no painel</h2>
+      <p class="muted">Somente a conta autorizada pode alterar o placar.</p>
+      <form id="loginForm">
+        <label>E-mail<input id="email" type="email" autocomplete="username" required></label>
+        <label>Senha<input id="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary-btn" type="submit">Entrar</button>
+        <p id="loginError" class="error"></p>
+      </form>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="admin-header">
+        <div><span class="eyebrow">CONTROLE</span><h2>Adicionar competição</h2></div>
+        <button id="logoutBtn" class="secondary-btn">Sair</button>
+      </div>
+
+      <div class="admin-panel">
+        <form id="competitionForm">
+          <label>Nome da competição<input id="nome" type="text" placeholder="Ex.: Touro Mecânico" required></label>
+          <label>Vencedor
+            <select id="vencedor" required>
+              <option value="voce">Você</option>
+              <option value="gabriel">Gabriel</option>
+            </select>
+          </label>
+          <label>Data<input id="data" type="date"></label>
+          <button class="primary-btn" type="submit">🏆 Registrar vitória</button>
+          <p id="formMessage" class="success"></p>
+        </form>
+      </div>
+
+      <div class="admin-panel">
+        <div class="section-heading"><h2>Competições registradas</h2></div>
+        <div id="adminHistory" class="history-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

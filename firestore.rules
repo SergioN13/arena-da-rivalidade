@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // O placar é público para leitura.
+    // Somente usuários autenticados podem criar/excluir resultados.
+    match /competicoes/{competicaoId} {
+      allow read: if true;
+      allow create, delete: if request.auth != null;
+      allow update: if false;
+    }
+  }
+}
