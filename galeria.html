@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria — Arena da Rivalidade</title>
+  <style>
+    :root {
+      --bg: #08080d;
+      --panel: #11111a;
+      --panel-2: #171722;
+      --border: rgba(255,255,255,.09);
+      --text: #f5f5f7;
+      --muted: #9a9aaa;
+      --purple: #8b5cf6;
+      --purple-2: #a78bfa;
+      --danger: #ef4444;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(139,92,246,.14), transparent 28%),
+        radial-gradient(circle at 90% 80%, rgba(99,102,241,.10), transparent 30%),
+        var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: .13;
+      pointer-events: none;
+    }
+
+    .glow-1 { background: #8b5cf6; top: -180px; left: -120px; }
+    .glow-2 { background: #6366f1; bottom: -180px; right: -120px; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 6%;
+      background: rgba(8,8,13,.82);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--purple-2);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    h1, h2, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(21px, 3vw, 30px);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-purple {
+      background: var(--purple);
+      border-color: var(--purple);
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: 0 auto;
+      padding: 42px 0 70px;
+    }
+
+    .hero {
+      margin-bottom: 30px;
+    }
+
+    .hero h2 {
+      font-size: clamp(28px, 5vw, 46px);
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .gallery-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .photo-card,
+    .add-card {
+      min-height: 360px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(17,17,26,.9);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .photo-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-image {
+      width: 100%;
+      height: 235px;
+      object-fit: cover;
+      display: block;
+      background: #0d0d14;
+    }
+
+    .photo-info {
+      padding: 16px;
+      flex: 1;
+    }
+
+    .photo-date {
+      color: var(--purple-2);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      margin-bottom: 7px;
+    }
+
+    .photo-challenge {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .photo-description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .add-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      min-height: 360px;
+      border: 1px dashed rgba(167,139,250,.45);
+      background: linear-gradient(145deg, rgba(139,92,246,.07), rgba(17,17,26,.85));
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .add-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--purple-2);
+      background: linear-gradient(145deg, rgba(139,92,246,.13), rgba(17,17,26,.95));
+    }
+
+    .add-content {
+      text-align: center;
+    }
+
+    .plus {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: rgba(139,92,246,.16);
+      border: 1px solid rgba(167,139,250,.35);
+      color: var(--purple-2);
+      font-size: 42px;
+      font-weight: 300;
+    }
+
+    .add-content strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .add-content span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 50px 20px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      width: min(520px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 25px;
+      border-radius: 20px;
+      background: #11111a;
+      border: 1px solid var(--border);
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .modal-header h3 {
+      margin: 0 0 5px;
+      font-size: 22px;
+    }
+
+    .modal-header p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .close {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 13px;
+      outline: none;
+      color: var(--text);
+      background: #0b0b11;
+      font: inherit;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139,92,246,.12);
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .preview {
+      display: none;
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .preview img {
+      width: 100%;
+      max-height: 230px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 850px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        padding: 15px 4%;
+      }
+
+      .top-actions .btn {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .container {
+        width: 92%;
+        padding-top: 30px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-image {
+        height: 240px;
+      }
+
+      .gallery-info {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <header class="topbar">
+    <div>
+      <span class="eyebrow">MEMÓRIA DA RIVALIDADE</span>
+      <h1>📸 Galeria da Arena</h1>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn" onclick="window.location.href='index.html'">← Voltar</button>
+      <button class="btn btn-purple" id="topAddBtn">+ Foto</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <span class="eyebrow">ÁLBUM PARA A POSTERIDADE</span>
+      <h2>Momentos que ficaram para a história.</h2>
+      <p>
+        Registre as batalhas, desafios e momentos marcantes da Arena da Rivalidade.
+      </p>
+    </section>
+
+    <div class="gallery-info">
+      <strong>Fotos registradas</strong>
+      <span class="counter" id="photoCounter">0 fotos</span>
+    </div>
+
+    <section id="galleryGrid" class="gallery-grid">
+
+      <!--
+        As fotos serão adicionadas aqui futuramente.
+        O card + permanece sempre no final.
+      -->
+
+      <div class="add-card" id="addCard">
+        <div class="add-content">
+          <div class="plus">+</div>
+          <strong>Adicionar foto</strong>
+          <span>Registre mais um momento da rivalidade</span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3>📸 Adicionar momento</h3>
+          <p>Registre uma foto para a história da Arena.</p>
+        </div>
+
+        <button class="close" id="closeModal" aria-label="Fechar">×</button>
+      </div>
+
+      <form id="photoForm">
+
+        <div class="form-group">
+          <label for="photoFile">Foto</label>
+          <input id="photoFile" type="file" accept="image/*" required>
+
+          <div class="preview" id="preview">
+            <img id="previewImage" alt="Pré-visualização da foto">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="photoDate">Data</label>
+          <input id="photoDate" type="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="photoChallenge">Qual foi o desafio?</label>
+          <input
+            id="photoChallenge"
+            type="text"
+            maxlength="80"
+            placeholder="Ex.: Desafio da corrida"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="photoDescription">Descrição</label>
+          <textarea
+            id="photoDescription"
+            maxlength="250"
+            placeholder="Conte brevemente o que aconteceu nesse momento..."
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" id="cancelModal">Cancelar</button>
+          <button type="submit" class="btn btn-purple">Adicionar à galeria</button>
+        </div>
+
+        <div class="note">
+          Nesta primeira versão, a foto é exibida localmente para você testar o layout.
+          A conexão com Firebase Storage e Firestore será feita na próxima etapa.
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const addCard = document.getElementById("addCard");
+    const topAddBtn = document.getElementById("topAddBtn");
+    const closeModal = document.getElementById("closeModal");
+    const cancelModal = document.getElementById("cancelModal");
+    const photoForm = document.getElementById("photoForm");
+    const photoFile = document.getElementById("photoFile");
+    const photoDate = document.getElementById("photoDate");
+    const photoChallenge = document.getElementById("photoChallenge");
+    const photoDescription = document.getElementById("photoDescription");
+    const preview = document.getElementById("preview");
+    const previewImage = document.getElementById("previewImage");
+    const galleryGrid = document.getElementById("galleryGrid");
+    const photoCounter = document.getElementById("photoCounter");
+
+    let photos = [];
+
+    function openModal() {
+      modalBackdrop.classList.add("active");
+      photoDate.value = new Date().toISOString().split("T")[0];
+      setTimeout(() => photoChallenge.focus(), 100);
+    }
+
+    function closeModalWindow() {
+      modalBackdrop.classList.remove("active");
+      photoForm.reset();
+      preview.style.display = "none";
+      previewImage.src = "";
+    }
+
+    addCard.addEventListener("click", openModal);
+    topAddBtn.addEventListener("click", openModal);
+    closeModal.addEventListener("click", closeModalWindow);
+    cancelModal.addEventListener("click", closeModalWindow);
+
+    modalBackdrop.addEventListener("click", (event) => {
+      if (event.target === modalBackdrop) {
+        closeModalWindow();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeModalWindow();
+      }
+    });
+
+    photoFile.addEventListener("change", () => {
+      const file = photoFile.files[0];
+
+      if (!file) {
+        preview.style.display = "none";
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        previewImage.src = event.target.result;
+        preview.style.display = "block";
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    photoForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const file = photoFile.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const newPhoto = {
+          id: Date.now(),
+          image: e.target.result,
+          date: photoDate.value,
+          challenge: photoChallenge.value.trim(),
+          description: photoDescription.value.trim()
+        };
+
+        photos.unshift(newPhoto);
+        renderGallery();
+        closeModalWindow();
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    function formatDate(dateString) {
+      if (!dateString) return "";
+
+      const parts = dateString.split("-");
+
+      if (parts.length !== 3) return dateString;
+
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text || "";
+      return div.innerHTML;
+    }
+
+    function renderGallery() {
+      galleryGrid.innerHTML = "";
+
+      photos.forEach((photo) => {
+        const card = document.createElement("article");
+        card.className = "photo-card";
+
+        card.innerHTML = `
+          <img
+            class="photo-image"
+            src="${photo.image}"
+            alt="${escapeHtml(photo.challenge)}"
+          >
+
+          <div class="photo-info">
+            <div class="photo-date">${formatDate(photo.date)}</div>
+            <div class="photo-challenge">${escapeHtml(photo.challenge)}</div>
+            <div class="photo-description">
+              ${escapeHtml(photo.description) || "Sem descrição."}
+            </div>
+          </div>
+        `;
+
+        galleryGrid.appendChild(card);
+      });
+
+      galleryGrid.appendChild(addCard);
+
+      const total = photos.length;
+      photoCounter.textContent = `${total} ${total === 1 ? "foto" : "fotos"}`;
+    }
+  </script>
+
+</body>
+</html>
